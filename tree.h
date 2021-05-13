@@ -21,6 +21,7 @@ struct Tree{
 
 Tree* createTree(int key, char* info);
 void printTree(Tree* root, int i);
+char* findFarest(Tree* root, int key);
 int add(Tree** root, Tree* tree, Tree* plug);
 int delete(Tree* tree, int key);
 char* find(Tree* tree, int key);

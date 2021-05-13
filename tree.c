@@ -245,11 +245,47 @@ int add(Tree** root, Tree* tree, Tree* plug){
     return 1;
 }
 int delete(Tree* tree, int key){
-
+    return 0;
 }
 char* find(Tree* tree, int key){
-
+    Tree* finder = tree;
+    while(finder != NULL){
+        if(key == finder->key)
+            return finder->info;
+        if(key < finder->key){
+            finder = finder->left;
+        }
+        if(key > finder->key){
+            finder = finder->right;
+        }
+    }
+    return NULL;
 }
-void freeTree(Tree* tree){
 
+char* findFarest(Tree* root, int key){
+    Tree* finder = root;
+    while(finder->left != NULL){
+        finder = finder->left;
+    }
+    Tree* min = finder;
+    finder = root;
+    while(finder->right != NULL){
+        finder = finder->right;
+    }
+    Tree* max = finder;
+    if(abs(max->key - key) > abs(min->key - key)){
+        return max->info;
+    }
+    else{
+        return min->info;
+    }
+}
+
+void freeTree(Tree* tree){
+    if(tree == NULL){
+        return;
+    }
+    freeTree(tree->left);
+    freeTree(tree->right);
+    freeBranch(tree);
 }

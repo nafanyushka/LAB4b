@@ -50,7 +50,9 @@ void dialogue() {
                     printf("Введите информацию: ");
                     info = get_String();
                 }while(strlen(info) < 1);
-                add(&root, root, createTree(key, info));
+                if(add(&root, root, createTree(key, info)) == 0){
+                    printf("Такой ключ уже лежит в дереве.\n");
+                }
                 break;
             case 0:
                 printf("\n");
