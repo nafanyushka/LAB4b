@@ -1,6 +1,10 @@
 #include <stdio.h>
+#include <windows.h>
+
+#include "dialogue.h"
 
 int main() {
-    printf("Hello, World!\n");
+    SetConsoleOutputCP(CP_UTF8);
+    dialogue();
     return 0;
 }

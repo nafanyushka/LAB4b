@@ -6,6 +6,7 @@
 #define LAB4B_DIALOGUE_H
 
 #include "input.h"
+#include "tree.h"
 
 void dialogue();
 
