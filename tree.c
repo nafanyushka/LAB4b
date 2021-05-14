@@ -145,7 +145,7 @@ int backendAdd(Tree** root, Tree* tree, Tree* plug){
         if(tree->left == NULL){
             tree->balance -= 1;
             tree->left = plug;
-            if(tree->balance < -1){
+            if(abs(tree->balance) > DELTA){
                 if(*root == tree)
                     reBalanceLeftLess(tree, root);
                 else {
@@ -163,7 +163,7 @@ int backendAdd(Tree** root, Tree* tree, Tree* plug){
             if(k == 1){
                 reBalanceRightLess(tree->left, &tree);
             }
-            if(tree->balance < -1) {
+            if(abs(tree->balance) > DELTA) {
                 if (*root == tree)
                     reBalanceLeftLess(tree, root);
                 else
@@ -176,7 +176,7 @@ int backendAdd(Tree** root, Tree* tree, Tree* plug){
         if(tree->right == NULL){
             tree->balance += 1;
             tree->right = plug;
-            if(tree->balance > 1){
+            if(tree->balance > DELTA){
                 if(*root == tree)
                     reBalanceRightLess(tree, root);
                 else
@@ -193,7 +193,7 @@ int backendAdd(Tree** root, Tree* tree, Tree* plug){
             if(k == 1){
                 reBalanceRightLess(tree->right, &tree);
             }
-            if(tree->balance > 1){
+            if(tree->balance > DELTA){
                 if(*root == tree)
                     reBalanceRightLess(tree, root);
                 else
@@ -254,9 +254,11 @@ char* find(Tree* tree, int key){
             return finder->info;
         if(key < finder->key){
             finder = finder->left;
+            continue;
         }
         if(key > finder->key){
             finder = finder->right;
+            continue;
         }
     }
     return NULL;
@@ -279,6 +281,28 @@ char* findFarest(Tree* root, int key){
     else{
         return min->info;
     }
+}
+
+void printHigher(Tree* tree, int* key){
+    if(tree == NULL)
+        return;
+    if(key == NULL){
+        printHigher(tree->right, key);
+        printf("Ключ: %d, информация: %s\n", tree->key, tree->info);
+        printHigher(tree->left, key);
+    }
+    else{
+        if(*key >= tree->key){
+            printHigher(tree->right, key);
+        }
+        else{
+            printHigher(tree->right, key);
+            printf("Ключ: %d, информация: %s.\n", tree->key, tree->info);
+            printHigher(tree->left, key);
+        }
+    }
+
+
 }
 
 void freeTree(Tree* tree){

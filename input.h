@@ -5,6 +5,7 @@
 #ifndef LAB4B_INPUT_H
 #define LAB4B_INPUT_H
 
+int* getVoidInt();
 int getInt();
 float getFloat();
 char* get_String();

@@ -26,6 +26,7 @@ Tree* load(){
 
 void dialogue() {
     int key, choose;
+    char* voidKey;
     char *info;
 
 //    printf("Введите ключ корня: ");
@@ -40,6 +41,9 @@ void dialogue() {
 
     do{
         printf("Введите 1, чтобы добавить элемент в дерево Нафани.\n"
+               "Введите 2, чтобы найти элемент в дереве Нафани.\n"
+               "Введите 3, чтобы найти самый удаленный элемент в дереве Нафани.\n"
+               "Введите 4, чтобы напечатать все большие ключи от заданного.\n"
                "Введите 0, чтобы вывести дерево Нафани.\n");
         choose = getInt();
         switch (choose) {
@@ -54,6 +58,44 @@ void dialogue() {
                     printf("Такой ключ уже лежит в дереве.\n");
                 }
                 break;
+            case 2:
+                printf("Введите ключ для поиска: ");
+                key = getInt();
+                info = find(root, key);
+                if(info == NULL){
+                    printf("Не удалось найти объект с таким ключом.\n");
+                }
+                else
+                    printf("Найденный объект содержит следующую информацию: %s\n", info);
+                break;
+            case 3:
+                printf("Введите ключ для поиска: ");
+                key = getInt();
+                info = findFarest(root, key);
+                printf("Информация найденного объекта: %s\n", info);
+                break;
+            case 4:
+                printf("Введите ключ, чтобы вывести все что его превышает: ");
+                voidKey = get_String();
+                int* num = (int*)calloc(sizeof(int), 1);
+                if(*voidKey == '\0')
+                    num = NULL;
+                else{
+                    while(*voidKey != '\0'){
+                        if(*voidKey < 48 || *voidKey > 57) {
+                            free(voidKey);
+                            free(num);
+                            printf("Похоже, вы ввели буквы.\n");
+                            break;
+                        }
+                        *num = (*num) * 10 + (*voidKey) - 48;
+                        voidKey++;
+                    }
+                }
+                printHigher(root, num);
+                free(voidKey);
+                free(num);
+                break;
             case 0:
                 printf("\n");
                 printTree(root, 0);
@@ -64,5 +106,6 @@ void dialogue() {
         }
 
 
-    }while(choose != 3);
+    }while(choose != 100);
+    freeTree(root);
 }
