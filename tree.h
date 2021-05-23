@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define DELTA 2
+#define DELTA 1
 
 typedef struct Tree Tree;
 
@@ -25,7 +25,7 @@ void printTree(Tree* root, int i);
 char* findFarest(Tree* root, int key);
 void printHigher(Tree* tree, int* key);
 int add(Tree** root, Tree* tree, Tree* plug);
-int delete(Tree* tree, int key);
+int delete(Tree** root, Tree* tree, Tree* previous, int key);
 char* find(Tree* tree, int key);
 void freeTree(Tree* tree);
 

@@ -44,7 +44,7 @@ void correctRightLess(Tree* tree, Tree** parent){
     }
 }
 
-int reBalanceLeftLess(Tree* tree, Tree** parent){ //ТО ЕСТЬ СЛЕВА БОЛЬШЕ ЭЛЕМЕНТОВ НА ДВА
+int reBalanceLeftLess(Tree* tree, Tree** parent){ //ТО ЕСТЬ СЛЕВА БОЛЬШЕ ЭЛЕМЕНТОВ
     Tree* fixer = tree->left;
     Tree* prevFixer = tree;
     Tree* firstLeft = fixer;
@@ -92,7 +92,7 @@ int reBalanceLeftLess(Tree* tree, Tree** parent){ //ТО ЕСТЬ СЛЕВА Б�
     return 1;
 }
 
-int reBalanceRightLess(Tree* tree, Tree** parent){ //ТО ЕСТЬ СПРАВА БОЛЬШЕ ЭЛЕМЕНТОВ НА ДВА
+int reBalanceRightLess(Tree* tree, Tree** parent){ //ТО ЕСТЬ СПРАВА БОЛЬШЕ ЭЛЕМЕНТОВ
     Tree* fixer = tree->right;
     Tree* prevFixer = tree;
     Tree* firstLeft = fixer;
@@ -244,8 +244,147 @@ int add(Tree** root, Tree* tree, Tree* plug){
     backendAdd(root, tree, plug);
     return 1;
 }
-int delete(Tree* tree, int key){
-    return 0;
+
+int delete(Tree** root, Tree* tree, Tree* previous, int key){
+    if(tree == NULL)
+        return 0;
+    else if(key < tree->key){
+        int k = delete(root, tree->left, tree, key);
+        if(k != 0){
+            tree->balance++;
+            if(abs(tree->balance) > DELTA){
+                if(previous == NULL)
+                    reBalanceRightLess(tree, root);
+                else
+                    reBalanceRightLess(tree, &previous);
+            }
+        }
+        return k;
+    }
+    else if(key > tree->key){
+        int k = delete(root, tree->right, tree, key);
+        if(k != 0){
+            tree->balance--;
+            if(tree->balance > DELTA){
+                if(previous == NULL)
+                    reBalanceLeftLess(tree, root);
+                else
+                    reBalanceLeftLess(tree, &previous);
+            }
+        }
+        return k;
+    }
+    else if(key == tree->key){ //ПОШЛИ УДАЛЯШКИ ДА БЛИН
+        if(tree->left == NULL && tree->right == NULL){
+            if(previous == NULL){
+                *root = NULL;
+                freeBranch(tree);
+                return 1;
+            }
+            else{
+                if(key < previous->key){
+                    previous->left = NULL;
+                    freeBranch(tree);
+                    return 1;
+                }
+                else{
+                    previous->right = NULL;
+                    freeBranch(tree);
+                    return 1;
+                }
+            }
+        }
+        else if(tree->left == NULL && tree->right != NULL){
+            if(previous == NULL){
+                *root = tree->right;
+                freeBranch(tree);
+                return 1;
+            }
+            else{
+                if(key < previous->key){
+                    previous->left = tree->right;
+                    freeBranch(tree);
+                    return 1;
+                }
+                else{
+                    previous->right = tree->right;
+                    freeBranch(tree);
+                    return 1;
+                }
+            }
+        }
+        else if(tree->left != NULL && tree->right == NULL){
+            if(previous == NULL){
+                *root = tree->left;
+                freeBranch(tree);
+                return 1;
+            }
+            else{
+                if(key < previous->key){
+                    previous->left = tree->left;
+                    freeBranch(tree);
+                    return 1;
+                }
+                else{
+                    previous->right = tree->left;
+                    freeBranch(tree);
+                    return 1;
+                }
+            }
+        }
+        else if(tree->left != NULL && tree->right != NULL){
+            Tree* findReplace = tree->left;
+            Tree* helper = NULL;
+            Tree* firstLeft = tree->left;
+            while(findReplace->right != NULL){
+                findReplace->balance--;
+                helper = findReplace;
+                findReplace = findReplace->right;
+            }
+            if(helper != NULL){
+                helper->right = findReplace->left;
+                findReplace->left = tree->left;
+                findReplace->right = tree->right;
+                findReplace->balance = tree->balance + 1;
+            }
+            else{
+                findReplace->right = tree->right;
+                findReplace->balance = tree->balance + 1;
+            }
+            if(previous == NULL){
+                *root = findReplace;
+                if(findReplace->left == firstLeft)
+                    correctLeftLess(findReplace->left, root);
+                if(findReplace->balance > DELTA){
+                    reBalanceRightLess(findReplace, root);
+                }
+                freeBranch(tree);
+                return 1;
+            }
+            else{
+                if(key < previous->key){
+                    previous->left = findReplace;
+                    if(findReplace->left == firstLeft)
+                        correctLeftLess(findReplace->left, &findReplace);
+                    if(findReplace->balance > DELTA){
+                        reBalanceRightLess(findReplace, &previous);
+                    }
+                    freeBranch(tree);
+                    return 1;
+                }
+                else{
+                    previous->right = findReplace;
+                    if(findReplace->left == firstLeft)
+                        correctLeftLess(findReplace->left, &findReplace);
+                    if(findReplace->balance > DELTA){
+                        reBalanceRightLess(findReplace, &previous);
+                    }
+                    freeBranch(tree);
+                    return 1;
+                }
+            }
+        }
+    }
 }
 char* find(Tree* tree, int key){
     Tree* finder = tree;
